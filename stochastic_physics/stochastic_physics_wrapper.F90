@@ -227,12 +227,15 @@ module stochastic_physics_wrapper_mod
              ! determine whether land paramaters have been over-written to
              ! trigger applying perturbations (logic copied from GFS_driver),
              ! or if perturbations should be applied at every time step
-             if (GFS_Control%nscyc > 0) then  ! mod will crash if nscyc = 0 
+
+             if (GFS_Control%nscyc > 0) then 
                  if (mod(GFS_Control%kdt,GFS_Control%nscyc) == 1 ) then
-                   param_update_flag = .true.
+                   param_update_flag = .true. !  update each time  gcycle has been called
                  else
                    param_update_flag = .false.
                  endif
+             elseif ( (GFS_Control%nscyc == 0) .and. (GFS_Control%kdt==1) ) then
+                param_update_flag = .true. ! update at first time step if not calling gcyle (nscyc=0)
              else 
                 param_update_flag = .false.
              endif
